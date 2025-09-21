@@ -5,6 +5,8 @@ stages:
 
 variables:
   PYTHON_VERSION: "3.11"
+  UV_VERSION: "0.1.12"
+  BASE_LAYER: "slim"
   DOCKER_REGISTRY: ${CI_REGISTRY}
   DOCKER_IMAGE_NAME: ${CI_REGISTRY_IMAGE}
   DOCKER_IMAGE_TAG: ${CI_COMMIT_SHA}
@@ -16,29 +18,22 @@ cache:
 
 test:
   stage: test
-  image: python:${PYTHON_VERSION}-slim
+  image: ghcr.io/astral-sh/uv:${UV_VERSION}-python${PYTHON_VERSION}-${BASE_LAYER}
   before_script:
     # Limpiar espacio y caché agresivamente
     - rm -rf /var/lib/apt/lists/* /var/cache/apt/* /var/lib/dpkg/*-old /var/tmp/* /tmp/*
     - apt-get clean
-    # Limpiar Docker
-    - docker system prune -af || true
-    # Limpiar pip cache
-    - rm -rf ~/.cache/pip
     # Actualizar e instalar solo lo esencial
     - apt-get update
-    - apt-get install -y --no-install-recommends curl ca-certificates libgl1 libglib2.0-0
+    - apt-get install -y --no-install-recommends libgl1 libglib2.0-0
     - rm -rf /var/lib/apt/lists/*
-    # Configurar pip para usar menos espacio
-    - python -m venv .venv --without-pip
-    - source .venv/bin/activate
-    - curl -sS https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-    - python get-pip.py --no-cache-dir
-    - rm get-pip.py
-    # Instalar dependencias de manera optimizada
-    - pip install --no-cache-dir numpy==1.24.0
-    - pip install --no-cache-dir matplotlib==3.7.1
-    - pip install --no-cache-dir -r requirements-web.txt
+    # Crear entorno virtual con uv
+    - uv venv
+    - . .venv/bin/activate
+    # Instalar dependencias con uv
+    - uv pip install --no-cache numpy==1.24.0
+    - uv pip install --no-cache matplotlib==3.7.1
+    - uv pip install --no-cache -r requirements-web.txt
     # Limpiar todo el caché posible
     - rm -rf ~/.cache/pip /tmp/* /var/tmp/*
   script:
