@@ -35,11 +35,14 @@ test:
     # Instalar dependencias del sistema
     - apt-get update
     - apt-get install -y ffmpeg libsm6 libxext6
-    - pip install uv
-    - uv venv -p .venv
-    - uv pip install -p .venv pytest numpy supervision ultralytics
+    # Crear entorno virtual y activarlo
+    - python -m venv .venv
+    - source .venv/bin/activate
+    # Instalar dependencias de Python
+    - pip install --upgrade pip
+    - pip install pytest numpy supervision ultralytics
   script:
-    - uv run -p .venv pytest tests/ -v
+    - pytest tests/ -v
   only:
     - main
     - merge_requests
