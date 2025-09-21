@@ -27,12 +27,12 @@ test:
     - rm -rf ~/.cache/pip
     # Actualizar e instalar solo lo esencial
     - apt-get update
-    - apt-get install -y --no-install-recommends libgl1 libglib2.0-0
+    - apt-get install -y --no-install-recommends curl ca-certificates libgl1 libglib2.0-0
     - rm -rf /var/lib/apt/lists/*
     # Configurar pip para usar menos espacio
     - python -m venv .venv --without-pip
     - source .venv/bin/activate
-    - wget https://bootstrap.pypa.io/get-pip.py
+    - curl -sS https://bootstrap.pypa.io/get-pip.py -o get-pip.py
     - python get-pip.py --no-cache-dir
     - rm get-pip.py
     # Instalar dependencias de manera optimizada
