@@ -26,7 +26,7 @@ test:
     - source .venv/bin/activate
     - pip install --upgrade pip
     # Solo lo necesario para las pruebas que vamos a ejecutar
-    - pip install pytest pytest-mock numpy supervision ultralytics streamlit opencv-python
+    - pip install -r requirements-web.txt
   script:
     # Ejecutar únicamente pruebas core y utilidades (evitamos UI/grpc/headless)
     - pytest tests/test_counter.py tests/test_detector_mapping.py -v tests/test_utils.py::test_winsound_beep_on_non_windows -v
