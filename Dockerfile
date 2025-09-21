@@ -22,7 +22,9 @@ COPY requirements-web.txt .
 
 # Actualizar pip y herramientas base, luego instalar dependencias de Python
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel \
-    && pip install --no-cache-dir -r requirements-web.txt
+    && pip install --no-cache-dir -r requirements-web.txt \
+    && rm -rf /root/.cache/pip/* \
+    && find /usr/local -type d -name __pycache__ -exec rm -r {} +
 
 # --- Etapa final ---
 FROM base AS final

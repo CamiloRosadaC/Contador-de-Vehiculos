@@ -18,15 +18,20 @@ test:
   stage: test
   image: python:${PYTHON_VERSION}-slim
   before_script:
-    # Dependencias del sistema (OpenCV)
+    # Limpiar espacio innecesario
+    - rm -rf /var/lib/apt/lists/*
+    - apt-get clean
+    # Dependencias del sistema (OpenCV) mínimas
     - apt-get update
-    - apt-get install -y ffmpeg libsm6 libxext6
+    - apt-get install -y --no-install-recommends libgl1 libglib2.0-0
+    - rm -rf /var/lib/apt/lists/*
     # venv estándar
     - python -m venv .venv
     - source .venv/bin/activate
-    - pip install --upgrade pip
+    - pip install --no-cache-dir --upgrade pip setuptools wheel
     # Solo lo necesario para las pruebas que vamos a ejecutar
-    - pip install -r requirements-web.txt
+    - pip install --no-cache-dir -r requirements-web.txt
+    - rm -rf /root/.cache/pip/*
   script:
     # Ejecutar únicamente pruebas core y utilidades (evitamos UI/grpc/headless)
     - pytest tests/test_counter.py tests/test_detector_mapping.py -v tests/test_utils.py::test_winsound_beep_on_non_windows -v
