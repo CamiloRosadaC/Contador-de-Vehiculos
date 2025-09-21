@@ -3,7 +3,7 @@
 # ==========================================================
 
 # --- Etapa base: Python slim + dependencias del sistema ---
-FROM python:3.10-slim AS base
+FROM python:3.12-slim AS base
 
 # Evitar prompts interactivos de apt
 ENV DEBIAN_FRONTEND=noninteractive
@@ -24,8 +24,9 @@ WORKDIR /app
 # Copiar requerimientos primero (para aprovechar cache de Docker)
 COPY requirements.txt .
 
-# Instalar dependencias de Python
-RUN pip install --no-cache-dir -r requirements.txt
+# Actualizar pip y herramientas base, luego instalar dependencias de Python
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel \
+    && pip install --no-cache-dir -r requirements.txt
 
 # --- Etapa final ---
 FROM base AS final
