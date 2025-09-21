@@ -3,6 +3,11 @@ numpy==1.24.0
 opencv-python-headless==4.8.1.78
 ultralytics==8.0.0
 supervision==0.18.0
+matplotlib==3.7.1
 
 # UI web (minimal)
 streamlit==1.38.0
+
+# Testing
+pytest==7.0.0
+pytest-mock==3.10.0

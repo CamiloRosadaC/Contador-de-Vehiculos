@@ -36,9 +36,9 @@ test:
     - python get-pip.py --no-cache-dir
     - rm get-pip.py
     # Instalar dependencias de manera optimizada
-    - pip install --no-cache-dir --no-deps numpy==1.24.0
-    - pip install --no-cache-dir --no-deps -r requirements-web.txt
-    - pip install --no-cache-dir pytest pytest-mock
+    - pip install --no-cache-dir numpy==1.24.0
+    - pip install --no-cache-dir matplotlib==3.7.1
+    - pip install --no-cache-dir -r requirements-web.txt
     # Limpiar todo el caché posible
     - rm -rf ~/.cache/pip /tmp/* /var/tmp/*
   script:
