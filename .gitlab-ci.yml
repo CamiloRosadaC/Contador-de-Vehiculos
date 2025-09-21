@@ -104,3 +104,4 @@ deploy:
     url: http://${DO_HOST}:8501
   only:
     - main
+    
