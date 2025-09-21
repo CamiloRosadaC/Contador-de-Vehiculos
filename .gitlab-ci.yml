@@ -4,7 +4,7 @@ stages:
   - deploy
 
 variables:
-  PYTHON_VERSION: "3.12"
+  PYTHON_VERSION: "3.11"
   DOCKER_REGISTRY: ${CI_REGISTRY}
   DOCKER_IMAGE_NAME: ${CI_REGISTRY_IMAGE}
   DOCKER_IMAGE_TAG: ${CI_COMMIT_SHA}
@@ -29,6 +29,8 @@ test:
     - python -m venv .venv
     - source .venv/bin/activate
     - pip install --no-cache-dir --upgrade pip setuptools wheel
+    # Instalamos primero numpy para evitar conflictos
+    - pip install --no-cache-dir numpy==1.24.0
     # Solo lo necesario para las pruebas que vamos a ejecutar
     - pip install --no-cache-dir -r requirements-web.txt
     - rm -rf /root/.cache/pip/*
