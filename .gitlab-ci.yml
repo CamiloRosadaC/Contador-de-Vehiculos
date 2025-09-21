@@ -18,22 +18,29 @@ test:
   stage: test
   image: python:${PYTHON_VERSION}-slim
   before_script:
-    # Limpiar espacio innecesario
-    - rm -rf /var/lib/apt/lists/*
+    # Limpiar espacio y caché agresivamente
+    - rm -rf /var/lib/apt/lists/* /var/cache/apt/* /var/lib/dpkg/*-old /var/tmp/* /tmp/*
     - apt-get clean
-    # Dependencias del sistema (OpenCV) mínimas
+    # Limpiar Docker
+    - docker system prune -af || true
+    # Limpiar pip cache
+    - rm -rf ~/.cache/pip
+    # Actualizar e instalar solo lo esencial
     - apt-get update
     - apt-get install -y --no-install-recommends libgl1 libglib2.0-0
     - rm -rf /var/lib/apt/lists/*
-    # venv estándar
-    - python -m venv .venv
+    # Configurar pip para usar menos espacio
+    - python -m venv .venv --without-pip
     - source .venv/bin/activate
-    - pip install --no-cache-dir --upgrade pip setuptools wheel
-    # Instalamos primero numpy para evitar conflictos
-    - pip install --no-cache-dir numpy==1.24.0
-    # Solo lo necesario para las pruebas que vamos a ejecutar
-    - pip install --no-cache-dir -r requirements-web.txt
-    - rm -rf /root/.cache/pip/*
+    - wget https://bootstrap.pypa.io/get-pip.py
+    - python get-pip.py --no-cache-dir
+    - rm get-pip.py
+    # Instalar dependencias de manera optimizada
+    - pip install --no-cache-dir --no-deps numpy==1.24.0
+    - pip install --no-cache-dir --no-deps -r requirements-web.txt
+    - pip install --no-cache-dir pytest pytest-mock
+    # Limpiar todo el caché posible
+    - rm -rf ~/.cache/pip /tmp/* /var/tmp/*
   script:
     # Ejecutar únicamente pruebas core y utilidades (evitamos UI/grpc/headless)
     - pytest tests/test_counter.py tests/test_detector_mapping.py -v tests/test_utils.py::test_winsound_beep_on_non_windows -v
