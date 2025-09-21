@@ -6,7 +6,6 @@ stages:
 variables:
   PYTHON_VERSION: "3.11"
   UV_VERSION: "0.1.12"
-  BASE_LAYER: "slim"
   DOCKER_REGISTRY: ${CI_REGISTRY}
   DOCKER_IMAGE_NAME: ${CI_REGISTRY_IMAGE}
   DOCKER_IMAGE_TAG: ${CI_COMMIT_SHA}
@@ -18,15 +17,17 @@ cache:
 
 test:
   stage: test
-  image: ghcr.io/astral-sh/uv:${UV_VERSION}-python${PYTHON_VERSION}-${BASE_LAYER}
+  image: python:${PYTHON_VERSION}-slim
   before_script:
     # Limpiar espacio y caché agresivamente
     - rm -rf /var/lib/apt/lists/* /var/cache/apt/* /var/lib/dpkg/*-old /var/tmp/* /tmp/*
     - apt-get clean
     # Actualizar e instalar solo lo esencial
     - apt-get update
-    - apt-get install -y --no-install-recommends libgl1 libglib2.0-0
+    - apt-get install -y --no-install-recommends curl libgl1 libglib2.0-0
     - rm -rf /var/lib/apt/lists/*
+    # Instalar uv
+    - curl -LsSf https://astral.sh/uv/install.sh | sh
     # Crear entorno virtual con uv
     - uv venv
     - . .venv/bin/activate
